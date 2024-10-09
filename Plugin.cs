@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Security.Permissions;
 using System.Linq;
+using UnityEngine;
 
 [assembly: AssemblyVersion(Local.Enemy.Variety.Plugin.version)]
 [assembly: SecurityPermission(SecurityAction.RequestMinimum, SkipVerification = true)]
@@ -140,5 +141,13 @@ class Plugin : BaseUnityPlugin
 	static void RestoreValue(CombatDirector __instance, bool __state)
 	{
 		__instance.resetMonsterCardIfFailed = __state;
+	}
+
+	[HarmonyPrefix, HarmonyPatch(typeof(HalcyoniteShrineInteractable),
+			nameof(HalcyoniteShrineInteractable.Awake))]
+	static void FixHalcyonShrine(Component __instance)
+	{
+		foreach ( var director in __instance.GetComponentsInChildren<CombatDirector>(true) )
+			director.resetMonsterCardIfFailed = false;
 	}
 }
